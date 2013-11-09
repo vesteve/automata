@@ -37,6 +37,13 @@
 <script type="application/javascript" src="js/cell-decorators.js"></script>
 
 <script type="application/javascript">
+/*
+ * var t0 = window.performance.now();
+ * doSomething();
+ * var t1 = window.performance.now();
+ * console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.")
+ * 
+*/
 
 var cellAuto = null;
 var cells = null;
@@ -49,7 +56,7 @@ var color =  d3.scale.linear().domain([0,100]).range(['steelblue', 'red']);
 
 $( document ).ready(function() {
 	
-	cellAuto = new MooreCellsAutomataFactory().build( 20, 20,1, new MooreDispersionBehaviour());
+	cellAuto = new AutomataFactory().build( 20, 20,1, new DispersionBehaviour());
 	cells = cellAuto.getCells();
 	
 	for(var x = 0; x < cells.length; x++) {
@@ -86,9 +93,9 @@ function update() {
 			var l = d.getLocation();
 			
 			if (cellAuto.getCells()[l.x][l.y][l.z] instanceof HeaterCellDecorator) {
-				cellAuto.getCells()[l.x][l.y][l.z] = cellAuto.getCells()[l.x][l.y][l.z].getInner();
+				cellAuto.setCell([l.x], [l.y], [l.z], cellAuto.getCells()[l.x][l.y][l.z].getInner());
 			}
-			else cellAuto.getCells()[l.x][l.y][l.z] = new HeaterCellDecorator(cellAuto.getCells()[l.x][l.y][l.z]);		
+			else cellAuto.setCell([l.x], [l.y], [l.z],new HeaterCellDecorator(cellAuto.getCells()[l.x][l.y][l.z]));		
 		});
 	
 	rect.transition()

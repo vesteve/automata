@@ -4,8 +4,7 @@
  * 		- Refactor and create another Strategy for Neighbourhood.
  * 			- This strategy has to caché the neighbourhood.
  * 
- * 		- Change name for MooreCellsAutomataFactory
- * 
+  * 
  * 
  */
 
@@ -26,6 +25,9 @@ function CellularAutomata(w, h, d) {
 CellularAutomata.prototype = {
 	constructor: CellularAutomata,
 	getCells: function() {return this.cells;},
+	setCell: function(x, y, z, cell) {
+		this.cells[x][y][z] = cell;
+	},
 	update: function() {
 		
 		for(var x = 0; x < this.cells.length; x++) {
@@ -44,11 +46,11 @@ CellularAutomata.prototype = {
 
 /* ---------------------------------------------------------------------------------------------- */	
 // Factory
-function MooreCellsAutomataFactory() {
+function AutomataFactory() {
 	
 }
-MooreCellsAutomataFactory.prototype = {
-	constructor: MooreCellsAutomataFactory,
+AutomataFactory.prototype = {
+	constructor: AutomataFactory,
 	build: function(w, h, d, changeBehaviour) {
 		
 		var ret = new CellularAutomata(w,h,d);
@@ -107,5 +109,52 @@ BorderCell.prototype.getNeighbourhood = function(cell) {
 // Neighbourhood Strategies
 function MooreNeighbourhood() {};
 MooreNeighbourhood.prototype = {
-	getNeighbourhood: function(cell) {}
+};
+MooreNeighbourhood.getNeighbourhood = function(cell) {
+	var ret = null;
+	
+	var automata = cell.getParent();
+	var cells = automata.getCells();
+	
+	var w = cells.length;
+	var h = cells[0].length;
+	var d = cells[0][0].length;
+	
+	var x = cell.getLocation().x;
+	var y = cell.getLocation().y;
+	var z = cell.getLocation().z;
+	
+	
+	// [n,		ne,			e, 		se, 		s, 			sw, 	w, 		nw]
+	// [y-1,	y-1 x+1,	x+1, 	y+1 x+1, 	y+1,	y+1	x-1, 	x-1,	y-1 x-1]
+	ret = [
+		(z-1<0) || (y-1<0) ? new BorderCell(x,y-1,z-1) : cells[x][y-1][z-1],
+		(z-1<0) || (y-1<0) || (x+1>=w) ? new BorderCell(x+1,y-1,z-1) : cells[x+1][y-1][z-1],
+		(z-1<0) || (x+1>=w) ? new BorderCell(x+1,y,z-1) : cells[x+1][y][z-1],
+		(z-1<0) || (y+1>=h) || (x+1>=w) ? new BorderCell(x+1,y+1,z-1) : cells[x+1][y+1][z-1],
+		(z-1<0) || (y+1>=h) ? new BorderCell(x,y+1,z-1) : cells[x][y+1][z+1],
+		(z-1<0) || (y+1>=h) || (x-1<0) ? new BorderCell(x-1,y+1,z-1) : cells[x-1][y+1][z-1],
+		(z-1<0) || (x-1<0) ? new BorderCell(x-1,y-1,z-1) : cells[x-1][y][z-1],
+		(z-1<0) || (y-1<0) || (x-1<0) ? new BorderCell(x-1,y-1,z-1) : cells[x-1][y-1][z-1],
+	
+		(y-1<0) ? new BorderCell(x,y-1,z) : cells[x][y-1][z],
+		(y-1<0) || (x+1>=w) ? new BorderCell(x+1,y-1,z) : cells[x+1][y-1][z],
+		(x+1>=w) ? new BorderCell(x+1,y,z) : cells[x+1][y][z],
+		(y+1>=h) || (x+1>=w) ? new BorderCell(x+1,y+1,z) : cells[x+1][y+1][z],
+		(y+1>=h) ? new BorderCell(x,y+1,z) : cells[x][y+1][z],
+		(y+1>=h) || (x-1<0) ? new BorderCell(x-1,y+1,z) : cells[x-1][y+1][z],
+		(x-1<0) ? new BorderCell(x-1,y-1,z) : cells[x-1][y][z],
+		(y-1<0) || (x-1<0) ? new BorderCell(x-1,y-1,z) : cells[x-1][y-1][z],
+	
+		(z+1>=d) || (y-1<0) ? new BorderCell(x,y-1,z+1) : cells[x][y-1][z+1],
+		(z+1>=d) || (y-1<0) || (x+1>=w) ? new BorderCell(x+1,y-1,z+1) : cells[x+1][y-1][z+1],
+		(z+1>=d) || (x+1>=w) ? new BorderCell(x+1,y,z+1) : cells[x+1][y][z+1],
+		(z+1>=d) || (y+1>=h) || (x+1>=w) ? new BorderCell(x+1,y+1,z+1) : cells[x+1][y+1][z+1],
+		(z+1>=d) || (y+1>=h) ? new BorderCell(x,y+1,z+1) : cells[x][y+1][z+1],
+		(z+1>=d) || (y+1>=h) || (x-1<0) ? new BorderCell(x-1,y+1,z+1) : cells[x-1][y+1][z+1],
+		(z+1>=d) || (x-1<0) ? new BorderCell(x-1,y-1,z+1) : cells[x-1][y][z+1],
+		(z+1>=d) || (y-1<0) || (x-1<0) ? new BorderCell(x-1,y-1,z+1) : cells[x-1][y-1][z+1],
+	];
+	
+	return ret;
 };
