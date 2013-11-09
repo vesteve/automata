@@ -84,7 +84,6 @@ AutomataCell.prototype = {
 	getLocation: function() {return this.location; },
 	getProperties: function() {return this.properties;},
 	getPrevious: function() {return this.previousProperties;},
-	getNeighbourhood: function() {return this.behaviour.getCellNeighbours(this);},
 	getParent: function() { return this.automata;},
 	update: function() {
 		this.behaviour.setNewState(this);

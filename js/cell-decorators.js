@@ -15,7 +15,6 @@ CellDecorator.prototype.getInner = function() { return this.innerCell; };
 CellDecorator.prototype.getLocation = function() { return this.innerCell.getLocation();};
 CellDecorator.prototype.getProperties = function() { return this.innerCell.getProperties();};
 CellDecorator.prototype.getPrevious = function() { return this.innerCell.getPrevious();};
-CellDecorator.prototype.getNeighbourhood = function() { return this.innerCell.getNeighbourhood();};
 CellDecorator.prototype.getParent = function() { return this.innerCell.getParent();};
 CellDecorator.prototype.update = function() {	this.innerCell.update(); };
 CellDecorator.prototype.persist = function() { this.innerCell.persist(); };
@@ -27,6 +26,9 @@ function HeaterCellDecorator(cell) {
 }
 HeaterCellDecorator.prototype = new CellDecorator();
 HeaterCellDecorator.prototype.update = function() { 
+	// Update cell as usual
 	this.innerCell.update();
-	this.innerCell.getProperties().calor = 500;
+	
+	// re-set the heat property.
+	this.innerCell.getProperties().temperature = 500;
 };

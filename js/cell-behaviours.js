@@ -12,7 +12,7 @@
 function HeatDispersionBehaviour() {
 	
 	this.defaultProperties = {
-		calor: 10
+		temperature: 10
 	};
 }
 HeatDispersionBehaviour.prototype = {
@@ -25,14 +25,14 @@ HeatDispersionBehaviour.prototype = {
 		
 		// REFACTOR THIS PART
 		for(var i=0; i<neighbours.length;i++) {
-			neighboursValues[i] = neighbours[i].getPrevious() ? neighbours[i].getPrevious().calor : 10;
+			neighboursValues[i] = neighbours[i].getPrevious() ? neighbours[i].getPrevious().temperature : 10;
 		}
 		
-		var calor = 4*(neighboursValues[8]+neighboursValues[10]+neighboursValues[12]+neighboursValues[14]);
-		calor += (neighboursValues[15]+neighboursValues[9]+neighboursValues[11]+neighboursValues[13]);
-		calor = calor / 20;
+		var temperature = 4*(neighboursValues[8]+neighboursValues[10]+neighboursValues[12]+neighboursValues[14]);
+		temperature += (neighboursValues[15]+neighboursValues[9]+neighboursValues[11]+neighboursValues[13]);
+		temperature = temperature / 20;
 		
-		ret.calor = calor; 
+		ret.temperature = temperature; 
 		
 	},
 	getDefaultProperties: function() {return jQuery.extend(true, {}, this.defaultProperties);},

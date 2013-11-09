@@ -87,7 +87,7 @@ function update() {
 		.attr("y", function(d, i) { return d.getLocation().y * size; })
 		.attr("width", size)
 		.attr("height", size)
-		.style("fill", function(d) {return color(d.getProperties().calor); })
+		.style("fill", function(d) {return color(d.getProperties().temperature); })
 		.on("click", function(d) {
 			
 			var l = d.getLocation();
@@ -100,7 +100,7 @@ function update() {
 	
 	rect.transition()
 		.style("fill", function(d) { 
-			return color(d.getProperties().calor); 
+			return color(d.getProperties().temperature); 
 			});
 
 	rect.exit().transition()
@@ -117,11 +117,11 @@ function update() {
 		.attr("dx", size/2)
 		.attr("dy", "1.2em")
 		.attr("text-anchor", "middle")
-		.text(function(d) { return d.getProperties().calor;})
+		.text(function(d) { return d.getProperties().temperature;})
 		.attr("fill", "white");
 	
 	text.transition()
-		.text(function(d) { return d3.round(d.getProperties().calor,2);});
+		.text(function(d) { return d3.round(d.getProperties().temperature,2);});
 		
 	text.exit().transition().remove();	
 	
