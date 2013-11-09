@@ -32,3 +32,24 @@ HeaterCellDecorator.prototype.update = function() {
 	// re-set the heat property.
 	this.innerCell.getProperties().temperature = 500;
 };
+
+/* ---------------------------------------------------------------------------------------------- */
+//Cell Performance Decorator
+function CellPerformanceDecorator(cell, performanceLogger) {
+		this.innerCell = cell;
+		this.logger = performanceLogger;
+}
+CellPerformanceDecorator.prototype = new CellDecorator();
+CellPerformanceDecorator.prototype.update = function() {
+	
+	var time = window.performance.now();
+	
+	// Update cell as usual
+	this.innerCell.update();
+	
+	time = window.performance.now() - time;
+	
+	return time;
+	//console.log("Update took: " + time + " milliseconds");
+};
+

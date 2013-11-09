@@ -44,6 +44,43 @@ CellularAutomata.prototype = {
 	}
 };
 
+/* ---------------------------------------------------------------------------------------------- */
+// Cellular Automata Transparent Decorator
+function CellularAutomataDecorator(automata) {
+	this.inner = automata;
+}
+CellularAutomataDecorator.prototype = new CellularAutomata();
+CellularAutomataDecorator.prototype.getCells = function() { return this.inner.getCells(); };
+CellularAutomataDecorator.prototype.setCell = function(x, y, z, cell) { return this.inner.setCell(x, y, z, cell); };
+CellularAutomataDecorator.prototype.update = function() { this.inner.update(); };
+
+/* ---------------------------------------------------------------------------------------------- */
+// Cellular Automata Performance Decorator
+function CellularAutomataPerformanceDecorator(automata) {
+	this.inner = automata;
+}
+CellularAutomataPerformanceDecorator.prototype = new CellularAutomataDecorator();
+CellularAutomataPerformanceDecorator.prototype.setCell = function(x, y, z, cell) { return this.inner.setCell(x, y, z, new CellPerformanceDecorator(cell, null)); };
+CellularAutomataPerformanceDecorator.prototype.update = function() { 
+	var ret = 0;
+	
+	for(var x = 0; x < this.inner.getCells().length; x++) {
+		for(var y = 0; y < this.inner.getCells()[x].length; y++) {
+			for (var z = 0; z < this.inner.getCells()[x][y].length; z++) ret += this.inner.getCells()[x][y][z].update();
+		}
+	}
+	
+	for(var x = 0; x < this.inner.getCells().length; x++) {
+		for(var y = 0; y < this.inner.getCells()[x].length; y++) {
+			for (var z = 0; z < this.inner.getCells()[x][y].length; z++) this.inner.getCells()[x][y][z].persist();
+		}
+	}
+	
+	console.log("Update took: " + ret + " milliseconds");
+};
+
+
+
 /* ---------------------------------------------------------------------------------------------- */	
 // Factory
 function AutomataFactory() {
@@ -54,13 +91,14 @@ AutomataFactory.prototype = {
 	build: function(w, h, d, changeBehaviour) {
 		
 		var ret = new CellularAutomata(w,h,d);
+		//var ret = new CellularAutomataPerformanceDecorator(new CellularAutomata(w,h,d));
 		
 		var cells = ret.getCells();
 		// Add cells
 		for(var i = 0; i < w; i++) {
 			for(var j = 0; j < h ;j++) {
 				for (var k = 0; k < d; k++) {
-					cells[i][j][k] = new AutomataCell(changeBehaviour, i, j, k, ret);
+					ret.setCell(i, j, k, new AutomataCell(changeBehaviour, i, j, k, ret));
 				}
 			}
 		}
