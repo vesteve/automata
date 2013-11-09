@@ -7,6 +7,15 @@ At the top of the file there should be a short introduction and/ or overview tha
 
 ## Code Example
 
+### Just a simple Cellular Automata
+
+	<script type="application/javascript" src="js/jquery/jquery-1.10.2.js"></script>
+	<script type="application/javascript" src="js/automata.js"></script>
+	<script type="application/javascript" src="js/cell-behaviours.js"></script>
+	<script type="application/javascript" src="js/cell-decorators.js"></script>
+
+	...
+
 	<script type="application/javascript">
 	
 		// Create Cellular Automata, 20x20x1 - Cells to change using HeatDispersion
@@ -15,11 +24,100 @@ At the top of the file there should be a short introduction and/ or overview tha
 		// Cell 10,10,0 is set to a Heater
 		cellAuto.setCell( [10], [10], [0], new HeaterCellDecorator(cellAuto.getCells()[10][10][0]) );
 	
+		...
+	
 		setInterval(function() {
 			cellAuto.update();
 		}, 100);
 	</script>
+	
+### Cellular Automata and Visualization using d3js
 
+	<style type="text/css">
+		.chart rect {
+			stroke: white;
+		}
+	</style>
+
+	<script src="js/d3js/d3.v3.js" charset="utf-8"></script>
+	<script type="application/javascript" src="js/jquery/jquery-1.10.2.js"></script>
+	<script type="application/javascript" src="js/automata.js"></script>
+	<script type="application/javascript" src="js/cell-behaviours.js"></script>
+	<script type="application/javascript" src="js/cell-decorators.js"></script>
+
+	...
+
+	<script type="application/javascript">
+	
+		var cellAuto = null;
+		var cells = null;
+		var size = 20;
+		var data = new Array();
+		var chart;
+		
+		
+		var color =  d3.scale.linear().domain([0,100]).range(['steelblue', 'red']);
+
+		$( document ).ready(function() {
+			
+			cellAuto = new AutomataFactory().build( 20, 20,1, new HeatDispersionBehaviour());
+			cells = cellAuto.getCells();
+			
+			for(var x = 0; x < cells.length; x++) {
+				for(var y = 0; y < cells[x].length; y++) {
+					for (var z = 0; z < cells[x][y].length; z++) data.push( cells[x][y][z] );
+				}
+			}
+		
+			chart = d3.select("body").append("svg")
+				.attr("class", "chart")
+				.attr("width", size*100 - 1)
+				.attr("height", size*100 - 1);
+				
+			update();
+			
+			cellAuto.setCell(10, 10, 0, new HeaterCellDecorator(cellAuto.getCells()[10][10][0])); 
+		
+		});	
+		
+		function update() {
+			
+			// Cells
+			var rect = chart.selectAll("rect")
+				.data(data);
+				
+			rect.enter().append("rect")
+				.attr("x", function(d, i) {	return d.getLocation().x * size; })
+				.attr("y", function(d, i) { return d.getLocation().y * size; })
+				.attr("width", size)
+				.attr("height", size)
+				.style("fill", function(d) {return color(d.getProperties().temperature); })
+				.on("click", function(d) {
+					
+					var l = d.getLocation();
+					
+					if (cellAuto.getCells()[l.x][l.y][l.z] instanceof HeaterCellDecorator) {
+						cellAuto.setCell([l.x], [l.y], [l.z], cellAuto.getCells()[l.x][l.y][l.z].getInner());
+					}
+					else cellAuto.setCell([l.x], [l.y], [l.z],new HeaterCellDecorator(cellAuto.getCells()[l.x][l.y][l.z]));		
+				});
+			
+			rect.transition()
+				.style("fill", function(d) { 
+					return color(d.getProperties().temperature); 
+					});
+		
+			rect.exit().transition()
+				.remove();
+		}
+		
+		setInterval(function() {
+			cellAuto.update();
+			update();	
+		}, 100);
+
+	</script>
+	
 ## Motivation
 
 A short description of the motivation behind the creation and maintenance of the project. This should explain **why** the project exists.
