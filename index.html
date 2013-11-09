@@ -56,7 +56,7 @@ var color =  d3.scale.linear().domain([0,100]).range(['steelblue', 'red']);
 
 $( document ).ready(function() {
 	
-	cellAuto = new AutomataFactory().build( 20, 20,1, new DispersionBehaviour());
+	cellAuto = new AutomataFactory().build( 20, 20,1, new HeatDispersionBehaviour());
 	cells = cellAuto.getCells();
 	
 	for(var x = 0; x < cells.length; x++) {
@@ -72,7 +72,7 @@ $( document ).ready(function() {
 		
 	update();
 	
-	cellAuto.getCells()[10][10][0] = new HeaterCellDecorator(cellAuto.getCells()[10][10][0]); 
+	cellAuto.setCell([10], [10], [0], new HeaterCellDecorator(cellAuto.getCells()[10][10][0])); 
 
 });	
 

@@ -9,13 +9,13 @@
  
 /* ---------------------------------------------------------------------------------------------- */
 //Cell Behaviour
-function DispersionBehaviour() {
+function HeatDispersionBehaviour() {
 	
 	this.defaultProperties = {
 		calor: 10
 	};
 }
-DispersionBehaviour.prototype = {
+HeatDispersionBehaviour.prototype = {
 	setNewState: function(cell) {
 		var ret = cell.getProperties();
 		var neighbours = MooreNeighbourhood.getNeighbourhood(cell);
